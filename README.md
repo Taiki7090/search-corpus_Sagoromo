@@ -6,7 +6,7 @@
 
 このアプリケーションは、慶応義塾大の松本茂雄氏が開発・公開している **[短単位検索システム](https://github.com/smtmto/jp-suw-search)** をもとに、『狭衣物語』諸本対照コーパス用にUIをカスタムしたものです。
 
-アプリケーション公開ページ: []()
+アプリケーション公開ページ: [https://taiki7090.github.io/search-corpus_Sagoromo/](https://taiki7090.github.io/search-corpus_Sagoromo/)
 
 コーパス公開リポジトリ: [https://github.com/Taiki7090/corpus_Sagoromo](https://github.com/Taiki7090/corpus_Sagoromo)
 
