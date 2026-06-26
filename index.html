@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<meta charset="UTF-8" />
+<html lang="ja">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>狭衣物語諸本対照コーパス</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/search-form.css" />
+    <link rel="icon" href="resources/images/favicon.ico" type="image/x-icon" />
+    <link
+      rel="shortcut icon"
+      href="resources/images/favicon.ico"
+      type="image/x-icon"
+    />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="navbar-inner">
+        <span class="navbar-title">狭衣物語諸本対照コーパス</span>
+        <ul class="navbar-links">
+          <li>
+            <a
+              href="https://github.com/Taiki7090/corpus_Sagoromo"
+              target="_blank"
+              rel="noopener noreferrer"
+              >このコーパスについて</a
+            >
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="title-row">
+      <img class="box_left" src="resources/images/title.gif">
+      <div class="title-right">
+        <header>
+          <div id="current-data-source-display" class="data-source-indicator">
+            <span id="current-data-source-name" class="default"
+              >デフォルトデータ</span
+            >選択中
+          </div>
+        </header>
+        <img class="box_right" src="resources/images/head-back.gif">
+      </div>
+    </div>
+    <div class="container">
+      <div class="tabs">
+        <div class="tab active" data-tab="unit-search">短単位検索</div>
+        <div class="tab" data-tab="string-search">文字列検索</div>
+        <div class="tab" data-tab="data-select">データ選択</div>
+      </div>
+
+      <!-- short-unit-search tab -->
+      <div class="tab-content active" id="unit-search">
+        <div id="pre-context-section">
+          <div class="context-buttons-container pre-buttons">
+            <button id="add-pre-context-button" class="button-small">
+              ▼前方共起条件の追加
+            </button>
+          </div>
+          <div id="pre-context-conditions" style="display: none"></div>
+        </div>
+
+        <div class="search-condition" data-is-key="true">
+          <div class="search-condition-label key">キー</div>
+          <div class="search-condition-type">
+            <select class="condition-type">
+              <option value="書字形出現形">書字形出現形</option>
+              <option value="語彙素">語彙素</option>
+              <option value="語彙素読み">語彙素読み</option>
+              <option value="品詞">品詞</option>
+              <option value="活用型">活用型</option>
+              <option value="活用形">活用形</option>
+              <option value="発音形出現形">発音形出現形</option>
+            </select>
+          </div>
+          <div class="search-condition-input">
+            <input
+              type="text"
+              class="condition-value"
+              placeholder="短単位の文字列を入力"
+            />
+          </div>
+        </div>
+
+        <div id="post-context-section">
+          <div id="post-context-conditions" style="display: none"></div>
+          <div class="context-buttons-container post-buttons">
+            <button id="add-post-context-button" class="button-small">
+              ▲後方共起条件の追加
+            </button>
+          </div>
+        </div>
+
+        <!-- search button group -->
+        <div class="search-panel">
+          <div class="search-button-group center-aligned">
+            <button id="unit-search-button">検　索</button>
+            <button id="clear-search-conditions">条件クリア</button>
+          </div>
+          <div class="import-button-container">
+            <button id="import-search-conditions" title="検索条件式を取り込む">
+              <span class="icon">↩</span> 検索条件取込
+            </button>
+          </div>
+        </div>
+
+        <!-- search operation settings -->
+        <div class="filter-options">
+          <div class="filter-option">
+            <label>文脈中の区切り記号</label>
+            <select id="context-separator">
+              <option value="none">なし</option>
+              <option value="|" selected>|</option>
+            </select>
+            <label>前後文脈の語数</label>
+            <select id="context-size">
+              <option value="10">10</option>
+              <option value="20" selected>20</option>
+              <option value="30">30</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+              <option value="200">200</option>
+            </select>
+            <label>共起条件の範囲</label>
+            <select id="context-boundary">
+              <option value="not-cross" selected>文境界をまたがない</option>
+              <option value="cross">文境界をまたぐ</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- volume filter (for short-unit-search tab) -->
+        <div class="volume-filter" id="default-volume-filter">
+          <div class="volume-category">
+            <label class="volume-category-label">巻名フィルター</label>
+            <div class="volume-options" id="default-volume-options"></div>
+          </div>
+          <div class="volume-category">
+            <label class="volume-category-label">伝本名フィルター</label>
+            <div class="volume-options" id="default-manuscript-options"></div>
+          </div>
+        </div>
+
+        <!-- volume filter (upload data) -->
+        <div class="volume-filter" id="upload-volume-filter" style="display: none">
+          <div class="volume-category">
+            <label class="volume-category-label"
+              >巻名フィルター (ユーザーデータ)</label
+            >
+            <div class="volume-options"></div>
+          </div>
+        </div>
+
+        <!-- column display settings (short-unit-search tab only) -->
+        <div class="display-settings">
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+            "
+          >
+            <h3 style="margin: 0">表示設定</h3>
+            <div class="display-buttons-container">
+              <button id="select-all-columns" class="button-small">
+                全選択
+              </button>
+              <button id="select-context-only" class="button-small">
+                前後文脈のみ
+              </button>
+            </div>
+          </div>
+          <div class="column-options" style="margin-top: 10px">
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="col-file-name"
+                name="display-column"
+                value="ファイル名"
+                checked
+              /><label for="col-file-name">ファイル名</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="col-position"
+                name="display-column"
+                value="開始文字位置"
+                checked
+              /><label for="col-position">開始文字位置</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="col-end-position"
+                name="display-column"
+                value="終了文字位置"
+                checked
+              /><label for="col-end-position">終了文字位置</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="col-bos"
+                name="display-column"
+                value="文境界"
+                checked
+              /><label for="col-bos">文境界</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="col-pre-context"
+                name="display-column"
+                value="前文脈"
+                checked
+              /><label for="col-pre-context">前文脈</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="col-key"
+                name="display-column"
+                value="キー"
+                checked
+                disabled
+              /><label for="col-key">キー</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="col-post-context"
+                name="display-column"
+                value="後文脈"
+                checked
+              /><label for="col-post-context">後文脈</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="col-lemma"
+                name="display-column"
+                value="語彙素"
+                checked
+              /><label for="col-lemma">語彙素</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="col-lemma-reading"
+                name="display-column"
+                value="語彙素読み"
+                checked
+              /><label for="col-lemma-reading">語彙素読み</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="col-pos"
+                name="display-column"
+                value="品詞"
+                checked
+              /><label for="col-pos">品詞</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="col-conj-type"
+                name="display-column"
+                value="活用型"
+                checked
+              /><label for="col-conj-type">活用型</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="col-conj-form"
+                name="display-column"
+                value="活用形"
+                checked
+              /><label for="col-conj-form">活用形</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="col-pronunciation"
+                name="display-column"
+                value="発音形出現形"
+              /><label for="col-pronunciation">発音形出現形</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="col-word-type"
+                name="display-column"
+                value="語種"
+              /><label for="col-word-type">語種</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="col-original-string"
+                name="display-column"
+                value="原文文字列"
+                checked
+              /><label for="col-original-string">原文KWIC</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="col-volume"
+                name="display-column"
+                value="巻名"
+                checked
+              /><label for="col-volume">巻名</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="col-page-lineBegining"
+                name="display-column"
+                value="page-lineBegining"
+                checked
+              /><label for="col-page-lineBegining">丁数・行数</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="col-speaker-count"
+                name="display-column"
+                value="話者数"
+                checked
+              /><label for="col-speaker-count">話者数</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="col-speaker-id"
+                name="display-column"
+                value="話者ID"
+                checked
+              /><label for="col-speaker-id">話者ID</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="col-speaker"
+                name="display-column"
+                value="伝本名"
+                checked
+              /><label for="col-speaker">伝本名</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="col-age"
+                name="display-column"
+                value="年齢"
+                checked
+              /><label for="col-age">年齢</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="col-occupation"
+                name="display-column"
+                value="職業"
+                checked
+              /><label for="col-occupation">職業</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="col-collation-id"
+                name="display-column"
+                value="対校表番号"
+                checked
+              />
+              <label for="col-collation-id">対校表番号</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="col-permalink"
+                name="display-column"
+                value="permalink"
+                checked
+              /><label for="col-permalink">permalink</label>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin: 10px 0; text-align: right">
+          <label for="results-per-page">1ページの表示件数:</label>
+          <select id="results-per-page" style="width: auto; min-width: 80px">
+            <option value="20">20件</option>
+            <option value="50">50件</option>
+            <option value="100">100件</option>
+          </select>
+        </div>
+
+        <!-- short-unit-search result display part -->
+        <div id="unit-results" class="results" style="display: none">
+          <div class="result-stats-row">
+            <div class="result-stats" id="unit-result-stats"></div>
+            <button
+              id="unit-export-csv-button"
+              class="button-small export-csv-button"
+            >
+              検索結果出力
+            </button>
+          </div>
+          <div id="table-results">
+            <table class="results-table sortable" id="results-table">
+              <colgroup>
+                <col class="col-file-name" />
+                <col class="col-collation-id" />
+                <col class="col-position" />
+                <col class="col-end-position" />
+                <col class="col-bos" />
+                <col class="col-pre-context" />
+                <col class="col-key" />
+                <col class="col-post-context" />
+                <col class="col-lemma" />
+                <col class="col-lemma-reading" />
+                <col class="col-pos" />
+                <col class="col-conj-type" />
+                <col class="col-conj-form" />
+                <col class="col-pronunciation" />
+                <col class="col-word-type" />
+                <col class="col-volume" />
+                <col class="col-speaker" />
+                <col class="col-page-lineBegining" />
+                <!-- hidden by default -->
+                <col class="col-speaker-count" />
+                <col class="col-speaker-id" />
+                <col class="col-age" />
+                <col class="col-occupation" />
+                <col class="col-permalink" />
+              </colgroup>
+              <thead>
+                <tr></tr>
+              </thead>
+              <tbody id="results-table-body"></tbody>
+            </table>
+          </div>
+          <div class="pagination" id="pagination"></div>
+        </div>
+      </div>
+
+      <!-- string-search tab -->
+      <div class="tab-content" id="string-search">
+        <div class="search-panel">
+          <div class="search-input">
+            <input
+              type="text"
+              id="search-query"
+              placeholder="文字列を入力"
+              autocomplete="off"
+              maxlength="30"
+              title="最大30文字まで"
+            />
+          </div>
+        </div>
+        <!-- string-search options -->
+        <div
+          class="search-conditions-container closed"
+          id="string-search-options"
+        >
+          <div class="search-conditions-title">検索オプション</div>
+          <div class="search-conditions-display">
+            <div class="radio-group-horizontal">
+              <label style="font-weight: normal; color: #333"
+                >検索モード:</label
+              >
+              <div class="radio-option">
+                <input
+                  type="radio"
+                  id="string-search-mode-wildcard"
+                  name="string-search-mode"
+                  value="wildcard"
+                  checked
+                />
+                <label for="string-search-mode-wildcard"
+                  >ワイルドカードを使用</label
+                >
+              </div>
+              <div class="radio-option">
+                <input
+                  type="radio"
+                  id="string-search-mode-regex"
+                  name="string-search-mode"
+                  value="regex"
+                />
+                <label for="string-search-mode-regex">正規表現を使用</label>
+              </div>
+              <button
+                id="string-usage-guide-button"
+                class="button-small usage-guide-button"
+              >
+                使い方
+              </button>
+            </div>
+          </div>
+          <button class="toggle-conditions-button">▼</button>
+        </div>
+
+        <!-- string-search button -->
+        <div class="search-panel">
+          <div class="search-button-group center-aligned">
+            <button id="string-search-button">検　索</button>
+            <button id="string-clear-conditions">条件クリア</button>
+          </div>
+        </div>
+        <!-- search operation settings -->
+        <div class="filter-options">
+          <div class="filter-option">
+            <label>文脈中の区切り記号</label>
+            <select id="string-context-separator">
+              <option value="none">なし</option>
+              <option value="|" selected>|</option>
+            </select>
+          </div>
+          <div class="filter-option">
+            <label>前後文脈の語数</label>
+            <select id="string-context-size">
+              <option value="10">10</option>
+              <option value="20" selected>20</option>
+              <option value="30">30</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+              <option value="200">200</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- volume filter (for string-search tab) -->
+        <div class="volume-filter" id="string-default-volume-filter">
+          <div class="volume-category">
+            <label class="volume-category-label">巻名フィルター</label>
+            <div class="volume-options" id="string-default-volume-options"></div>
+          </div>
+          <div class="volume-category">
+            <label class="volume-category-label">伝本名フィルター</label>
+            <div class="volume-options" id="string-default-manuscript-options"></div>
+          </div>
+        </div>
+
+        <!-- volume filter (upload data) -->
+        <div
+          class="volume-filter"
+          id="string-upload-volume-filter"
+          style="display: none"
+        >
+          <div class="volume-category">
+            <label class="volume-category-label"
+              >巻名フィルター (ユーザーデータ)</label
+            >
+            <div class="volume-options"></div>
+          </div>
+        </div>
+
+        <!-- column display settings (string-search tab only) -->
+        <div class="display-settings">
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+            "
+          >
+            <h3 style="margin: 0">表示設定</h3>
+            <div class="display-buttons-container">
+              <button id="string-select-all-columns" class="button-small">
+                全選択
+              </button>
+              <button id="string-select-context-only" class="button-small">
+                前後文脈のみ
+              </button>
+            </div>
+          </div>
+          <div class="column-options" style="margin-top: 10px">
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="string-col-file-name"
+                name="string-display-column"
+                value="ファイル名"
+                checked
+              /><label for="string-col-file-name">ファイル名</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="string-col-position"
+                name="string-display-column"
+                value="開始文字位置"
+                checked
+              /><label for="string-col-position">開始文字位置</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="string-col-end-position"
+                name="string-display-column"
+                value="終了文字位置"
+                checked
+              /><label for="string-col-end-position">終了文字位置</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="string-col-bos"
+                name="string-display-column"
+                value="文境界"
+                checked
+              /><label for="string-col-bos">文境界</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="string-col-pre-context"
+                name="string-display-column"
+                value="前文脈"
+                checked
+              /><label for="string-col-pre-context">前文脈</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="string-col-key"
+                name="string-display-column"
+                value="キー"
+                checked
+                disabled
+              /><label for="string-col-key">キー</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="string-col-post-context"
+                name="string-display-column"
+                value="後文脈"
+                checked
+              /><label for="string-col-post-context">後文脈</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="string-col-lemma"
+                name="string-display-column"
+                value="語彙素"
+                checked
+              /><label for="string-col-lemma">語彙素</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="string-col-lemma-reading"
+                name="string-display-column"
+                value="語彙素読み"
+                checked
+              /><label for="string-col-lemma-reading">語彙素読み</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="string-col-pos"
+                name="string-display-column"
+                value="品詞"
+                checked
+              /><label for="string-col-pos">品詞</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="string-col-conj-type"
+                name="string-display-column"
+                value="活用型"
+                checked
+              /><label for="string-col-conj-type">活用型</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="string-col-conj-form"
+                name="string-display-column"
+                value="活用形"
+                checked
+              /><label for="string-col-conj-form">活用形</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="string-col-pronunciation"
+                name="string-display-column"
+                value="発音形出現形"
+              /><label for="string-col-pronunciation">発音形出現形</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="string-col-word-type"
+                name="string-display-column"
+                value="語種"
+              /><label for="string-col-word-type">語種</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="string-col-original-string"
+                name="string-display-column"
+                value="原文文字列"
+                checked
+              /><label for="string-col-original-string">原文KWIC</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="string-col-volume"
+                name="string-display-column"
+                value="巻名"
+                checked
+              /><label for="string-col-volume">巻名</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="string-col-page-lineBegining"
+                name="string-display-column"
+                value="page-lineBegining"
+                checked
+              /><label for="string-col-page-lineBegining">丁数・行数</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="string-col-speaker-count"
+                name="string-display-column"
+                value="話者数"
+                checked
+              /><label for="string-col-speaker-count">話者数</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="string-col-speaker-id"
+                name="string-display-column"
+                value="話者ID"
+                checked
+              /><label for="string-col-speaker-id">話者ID</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="string-col-speaker"
+                name="string-display-column"
+                value="伝本名"
+                checked
+              /><label for="string-col-speaker">伝本名</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="string-col-age"
+                name="string-display-column"
+                value="年齢"
+                checked
+              /><label for="string-col-age">年齢</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="string-col-occupation"
+                name="string-display-column"
+                value="職業"
+              /><label for="string-col-occupation">職業</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="string-col-collation-id"
+                name="string-display-column"
+                value="対校表番号"
+                checked
+              /><label for="string-col-collation-id">対校表番号</label>
+            </div>
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="string-col-permalink"
+                name="string-display-column"
+                value="permalink"
+                checked
+              /><label for="string-col-permalink">permalink</label>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin: 10px 0; text-align: right">
+          <label for="string-results-per-page">1ページの表示件数:</label>
+          <select
+            id="string-results-per-page"
+            style="width: auto; min-width: 80px"
+          >
+            <option value="20">20件</option>
+            <option value="50">50件</option>
+            <option value="100">100件</option>
+          </select>
+        </div>
+
+        <!-- String search results display section -->
+        <div id="string-results" class="results" style="display: none">
+          <div class="result-stats-row">
+            <div class="result-stats" id="string-result-stats"></div>
+            <button
+              id="string-export-csv-button"
+              class="button-small export-csv-button"
+            >
+              検索結果出力
+            </button>
+          </div>
+          <div id="string-table-results">
+            <table class="results-table sortable" id="string-results-table">
+              <colgroup>
+                <col class="col-file-name" />
+                <col class="col-collation-id" />
+                <col class="col-position" />
+                <col class="col-end-position" />
+                <col class="col-bos" />
+                <col class="col-pre-context" />
+                <col class="col-key" />
+                <col class="col-post-context" />
+                <col class="col-lemma" />
+                <col class="col-lemma-reading" />
+                <col class="col-pos" />
+                <col class="col-conj-type" />
+                <col class="col-conj-form" />
+                <col class="col-pronunciation" />
+                <col class="col-word-type" />
+                <col class="col-volume" />
+                <col class="col-speaker" />
+                <col class="col-page-lineBegining" />
+                <!-- hidden by default -->
+                <col class="col-speaker-count" />
+                <col class="col-speaker-id" />
+                <col class="col-age" />
+                <col class="col-occupation" />
+                <col class="col-permalink" />
+              </colgroup>
+              <thead>
+                <tr></tr>
+              </thead>
+              <tbody id="string-results-table-body"></tbody>
+            </table>
+          </div>
+          <div class="pagination" id="string-pagination"></div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="data-select">
+        <div class="data-columns">
+          <div class="data-column">
+            <h3>デモデータ</h3>
+            <div class="data-source-options vertical">
+              <div class="radio-option">
+                <input
+                  type="radio"
+                  id="data-source-default"
+                  name="data-source"
+                  value="default"
+                  checked
+                />
+                <label for="data-source-default">
+                  デモデータ　内閣文庫本「さころも」／元和九年古活字本「狭衣」
+                </label>
+              </div>
+              <ul class="upload-list">
+                <li>
+                  <a
+                    href="https://github.com/Taiki7090/corpus_Sagoromo"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >GitHub</a
+                  >で公開している内閣文庫本（0019-内閣_100011860）と元和九年古活字本（NDLD-元和_000000000）のデータを参照しています。
+                </li>
+                <li>
+                  本文は、底本を忠実に翻字したものをもとにしています（形態素解析のために一部の表記を改めています）。
+                </li>                
+                <li>
+                  形態論情報は、中古和文UniDicを使用して短単位に解析し、解析エラーを修正したものです。
+                </li>
+              </ul>
+              <p class="demo-data-attribution">
+                底本①：<b>内閣文庫本「さころも」</b><br />
+                国立公文書館デジタルアーカイブ（https://www.digital.archives.go.jp/img/4174980#1）の画像を利用しました。<br />
+                本文の解釈は、日本古典文学大系と新典社校注叢書を参考にしました。<br />
+                データ作成者：野田太暉<br />
+                コーパスデータ：<br />
+                テキストデータおよび形態論情報データは、GitHubリポジトリ（https://github.com/Taiki7090/corpus_Sagoromo）で公開されています。<br />
+                データのライセンスは、<b>CC BY 4.0</b> BY 野田太暉 です。<br />
+              </p>
+              <p class="demo-data-attribution">
+                底本②：<b>元和九年古活字本「狭衣」</b><br />
+                国立公文書館デジタルアーカイブ（https://www.digital.archives.go.jp/img/4174980#1）の画像を利用しました。<br />
+                本文の解釈は、日本古典全書と新潮日本古典集成を参考にしました。<br />
+                データ作成者：野田太暉<br />
+                コーパスデータ：<br />
+                テキストデータおよび形態論情報データは、GitHubリポジトリ（https://github.com/Taiki7090/corpus_Sagoromo）で公開されています。<br />
+                データのライセンスは、<b>CC BY 4.0</b> BY 野田太暉 です。<br />
+              </p>
+            </div>
+          </div>
+          <div class="data-column">
+            <h3>ユーザーデータ</h3>
+            <div class="data-source-options vertical">
+              <div class="radio-option">
+                <input
+                  type="radio"
+                  id="data-source-upload"
+                  name="data-source"
+                  value="upload"
+                  disabled
+                />
+                <label for="data-source-upload"
+                  >ユーザーデータ (アップロード)</label
+                >
+              </div>
+            </div>
+            <div id="uploaded-files-area" class="uploaded-files-list-container">
+              <h4 class="processed-files-header">読み込まれたデータ:</h4>
+              <ul id="processed-files-list" class="processed-files-list"></ul>
+            </div>
+            <div class="upload-section">
+              <div class="upload-controls">
+                <label
+                  for="file-upload"
+                  id="file-select-label"
+                  class="button-like-label"
+                  >ファイルを選択</label
+                >
+                <input
+                  type="file"
+                  id="file-upload"
+                  multiple
+                  accept=".txt,.tsv"
+                  class="file-input-hidden"
+                />
+                <button id="upload-button" class="button-small" disabled>
+                  ファイル読み込み
+                </button>
+                <button
+                  id="clear-upload-button"
+                  class="button-small clear-button-hidden"
+                >
+                  データクリア
+                </button>
+              </div>
+              <ul class="upload-list">
+                <li>GitHubリポジトリからダウンロードした形態論情報データ（TXTファイル）をアップロードすると、このシステムを使って検索することができます。</li>
+                <li>自作のデータをアップロードすることもできます（データの形式は
+                  <a
+                    href="https://github.com/Taiki7090/corpus_Sagoromo/#4-%E5%BD%A2%E6%85%8B%E8%AB%96%E6%83%85%E5%A0%B1%E3%83%87%E3%83%BC%E3%82%BF%E3%81%AE%E4%BB%95%E6%A7%98"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    GitHubリポジトリのREADME
+                  </a>を参照）。</li>
+                <li>読み込み可能なファイル数は最大250件、合計100MBまでです。</li>
+              </ul>
+              <div id="upload-status-container" class="upload-status-margin">
+                <div
+                  id="selected-files-container"
+                  class="selected-files-container"
+                >
+                  <div
+                    id="selected-files-display"
+                    class="selected-files-list"
+                    style="display: none"
+                  ></div>
+                  <button
+                    id="clear-selected-files-button"
+                    class="button-small clear-selected-files-button-hidden"
+                    title="チェックしたファイルを削除"
+                  >
+                    🗑️
+                  </button>
+                </div>
+                <!-- <hr class="status-divider"> -->
+                <span id="upload-status"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr class="section-divider upload-section-divider" />
+      </div>
+
+      <!-- loading indicator -->
+      <div class="loading" id="loading-indicator" style="display: none">
+        <div class="spinner-container">
+          <div class="spinner"></div>
+          <div class="loading-text">検索中...</div>
+        </div>
+      </div>
+      <!-- <div class="no-results" id="no-results"></div> -->
+
+      <!-- search results overall container (also used for error display) -->
+      <div class="results" id="results-container" style="display: none">
+        <div class="result-stats" id="result-stats"></div>
+        <!-- for data load error display -->
+      </div>
+
+      <!-- modal metadata display container -->
+      <div
+        id="modal-metadata-overlay"
+        class="modal-metadata-overlay"
+        style="display: none"
+      ></div>
+      <div
+        id="modal-metadata-container"
+        class="modal-metadata-container"
+        style="display: none"
+      >
+        <div class="modal-metadata-header">
+          <h3 id="modal-metadata-title">前後文脈の情報</h3>
+          <button
+            id="modal-metadata-close"
+            class="modal-metadata-close"
+            title="閉じる"
+          >
+            ×
+          </button>
+        </div>
+        <div id="modal-metadata-content">
+          <table id="modal-metadata-table" class="modal-metadata-table">
+            <thead>
+              <tr>
+                <th>ファイル名</th>
+                <th>開始文字位置</th>
+                <th>終了文字位置</th>
+                <th>文境界</th>
+                <th>書字形出現形</th>
+                <th>語彙素</th>
+                <th>語彙素読み</th>
+                <th>品詞</th>
+                <th>活用型</th>
+                <th>活用形</th>
+                <th>発音形出現形</th>
+                <th>語種</th>
+                <th>原文文字列</th>
+              </tr>
+            </thead>
+            <tbody id="modal-metadata-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- usage guide modal -->
+      <div
+        id="usage-guide-modal-overlay"
+        class="modal-overlay"
+        style="display: none"
+      ></div>
+      <div
+        id="usage-guide-modal-container"
+        class="modal-container"
+        style="display: none"
+      >
+        <div class="modal-header">
+          <h3>文字列検索の使い方</h3>
+          <button
+            id="usage-guide-modal-close"
+            class="modal-close-button"
+            title="閉じる"
+          >
+            ×
+          </button>
+        </div>
+        <div class="modal-content" id="usage-guide-modal-content">
+          <h4>ワイルドカード</h4>
+          <table class="usage-guide-table">
+            <thead>
+              <tr>
+                <th>ワイルドカード</th>
+                <th>説明</th>
+                <th>入力例</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>*</code> <code>%</code></td>
+                <td><strong>0文字以上</strong>の任意の文字列</td>
+                <td>
+                  <code>青*空</code>： "青空", "青<strong>い</strong>空",
+                  "青<strong>く澄んだ</strong>空"
+                </td>
+              </tr>
+              <tr>
+                <td><code>?</code> <code>_</code></td>
+                <td>任意の<strong>1文字</strong></td>
+                <td>
+                  <code>青?空</code>： "青<strong>い</strong>空",
+                  "青<strong>き</strong>空"
+                </td>
+              </tr>
+              <tr>
+                <td><code>[ ]</code></td>
+                <td>
+                  [ ]内の<strong>いずれか1文字</strong
+                  ><br /><br />文字種の指定例：<br />ひらがな
+                  <code>[ぁ-ん]</code> , カタカナ <code>[ァ-ヶ]</code> , 漢字
+                  <code>[一-龥]</code>
+                </td>
+                <td>
+                  <code>[金銀銅]賞</code>： "<strong>金</strong>賞",
+                  "<strong>銀</strong>賞", "<strong>銅</strong>賞"<br /><code
+                    >[ァ-ヶ][ァ-ヶ]い</code
+                  >： "<strong>スゴい</strong>", "<strong>デカい</strong>"<br />
+                </td>
+              </tr>
+              <tr>
+                <td><code>[^ ]</code></td>
+                <td>[^ ]内に<strong>含まれない1文字</strong></td>
+                <td><code>[^小大]学校</code>： "<strong>中</strong>学校"</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h4>正規表現の例</h4>
+          <table class="usage-guide-table">
+            <thead>
+              <tr>
+                <th>正規表現</th>
+                <th>説明</th>
+                <th>入力例</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>.</code></td>
+                <td>任意の<strong>1文字</strong></td>
+                <td>
+                  <code>青.空</code>： "青<strong>い</strong>空",
+                  "青<strong>き</strong>空"
+                </td>
+              </tr>
+              <tr>
+                <td><code>*</code></td>
+                <td>直前の文字の<strong>0回以上</strong>の繰り返し</td>
+                <td>
+                  <code>はー*い</code>： "はい", "は<strong>ー</strong>い",
+                  "は<strong>ーー</strong>い"
+                </td>
+              </tr>
+              <tr>
+                <td><code>+</code></td>
+                <td>直前の文字の<strong>1回以上</strong>の繰り返し</td>
+                <td>
+                  <code>はー+い</code>： "は<strong>ー</strong>い",
+                  "は<strong>ーー</strong>い", "は<strong>ーーー</strong>い"
+                </td>
+              </tr>
+              <tr>
+                <td><code>?</code></td>
+                <td>直前の文字が<strong>0回または1回</strong>出現</td>
+                <td>
+                  <code>ですか?</code>： "です", "です<strong>か</strong>"
+                </td>
+              </tr>
+              <tr>
+                <td><code>[ ]</code></td>
+                <td>[ ]内の<strong>いずれか1文字</strong></td>
+                <td>
+                  <code>[金銀銅]賞</code>： "<strong>金</strong>賞",
+                  "<strong>銀</strong>賞", "<strong>銅</strong>賞"
+                </td>
+              </tr>
+              <tr>
+                <td><code>[^ ]</code></td>
+                <td>[^ ]内に<strong>含まれない1文字</strong></td>
+                <td><code>[^小大]学校</code>： "<strong>中</strong>学校"</td>
+              </tr>
+              <tr>
+                <td><code>( | )</code></td>
+                <td>| の左右の<strong>いずれか</strong></td>
+                <td>
+                  <code>(東京|大阪)</code>： "<strong>東京</strong>",
+                  "<strong>大阪</strong>"
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- search condition import modal -->
+      <div
+        id="search-condition-modal-overlay"
+        class="modal-overlay"
+        style="display: none"
+      ></div>
+      <div
+        id="search-condition-modal-container"
+        class="modal-container"
+        style="display: none"
+      ></div>
+      <footer></footer>
+    </div>
+
+    <script src="js/data/metadata-definition.js" type="module"></script>
+    <script src="js/controllers/ui-controller.js" type="module"></script>
+    <script src="js/ui/ui-pagination.js" type="module"></script>
+    <script src="js/ui/ui-table-sort.js" type="module"></script>
+    <script src="js/ui/ui-table-top-scrollbar.js" type="module"></script>
+    <script src="js/services/data-service.js" type="module"></script>
+    <script src="js/search/search-conditions-common.js" type="module"></script>
+    <script src="js/search/search-dropdown.js" type="module"></script>
+    <script
+      src="js/search/search-short-unit-conditions.js"
+      type="module"
+    ></script>
+    <script src="js/search/search-context-conditions.js" type="module"></script>
+    <script src="js/search/search-condition-parser.js" type="module"></script>
+    <script src="js/services/search-service.js" type="module"></script>
+    <script src="js/main.js" type="module"></script>
+  </body>
+</html>
