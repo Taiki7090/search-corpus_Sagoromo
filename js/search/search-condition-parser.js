@@ -45,9 +45,8 @@ export function showSearchConditionInputModal() {
   const exampleCode = document.createElement("pre");
   exampleCode.className = "example-code";
   exampleCode.textContent =
-    'キー: 品詞 LIKE "名詞%"\n' +
-    'AND 前方共起: 書字形出現形="先生" WITHIN 10 WORDS FROM キー\n' +
-    'AND 後方共起: (語彙素="為る" AND 書字形出現形="する") ON 1 WORDS FROM キー';
+    'キー: 品詞 LIKE "形容詞%"\n' +
+    'AND 後方共起: (語彙素="気" AND 語彙素読み="ゲ") ON 1 WORDS FROM キー';
   exampleSection.appendChild(exampleCode);
   modalContent.appendChild(exampleSection);
   const textArea = document.createElement("textarea");
