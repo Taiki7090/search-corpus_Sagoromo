@@ -5,7 +5,7 @@ import { showLoading } from "../search/search-ui-loader.js";
 
 export class DataLoader {
   async loadInitialData() {
-    const DEMO_DATA_PATH = "../resources/data/demo-data.txt";
+    const DEMO_DATA_PATH = "resources/data/demo-data.txt";
 
     try {
       showLoading(true, "データ読み込み中...", "search");
