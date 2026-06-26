@@ -8,7 +8,7 @@
 
 アプリケーション公開ページ: [https://taiki7090.github.io/search-corpus_Sagoromo/](https://taiki7090.github.io/search-corpus_Sagoromo/)
 
-コーパス公開リポジトリ: [https://github.com/Taiki7090/corpus_Sagoromo](https://github.com/Taiki7090/open-corpus_Sagoromo)
+コーパス公開リポジトリ: [https://github.com/Taiki7090/open-corpus_Sagoromo](https://github.com/Taiki7090/open-corpus_Sagoromo)
 
 ## 2．主な機能
 
