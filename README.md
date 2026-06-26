@@ -2,7 +2,7 @@
 
 ## 1．概要
 
-**[『狭衣物語』諸本対照コーパス](https://github.com/Taiki7090/corpus_Sagoromo)** を検索するためのアプリケーションです。
+**[『狭衣物語』諸本対照コーパス](https://github.com/Taiki7090/open-corpus_Sagoromo)** を検索するためのアプリケーションです。
 
 このアプリケーションは、慶応義塾大の[松本茂雄](https://github.com/smtmto)氏が開発・公開している **[短単位検索システム](https://github.com/smtmto/jp-suw-search)** をもとに、『狭衣物語』諸本対照コーパス用にUIをカスタムしたものです。
 
