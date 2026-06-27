@@ -356,7 +356,7 @@ function buildDefaultFileName() {
   const timestamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(
     now.getDate()
   )}${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
-  return `jpsuw_${timestamp}.csv`;
+  return `kwic_${timestamp}.csv`;
 }
 
 function csvEscape(value) {
