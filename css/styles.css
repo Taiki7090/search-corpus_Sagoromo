@@ -130,9 +130,9 @@ body {
 
 .title-right .box_right {
   display: block;
-  max-width: min(33%, 450px);
+  max-width: min(35%, 450px);
   height: auto;
-  margin-top: var(--spacing-sm);
+  margin-top: 0;
 }
 
 .container {
@@ -1067,7 +1067,7 @@ label[for="string-results-per-page"] {
 /* Data Source Indicator */
 .data-source-indicator {
   font-size: 0.85em;
-  padding: var(--spacing-sm) var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md) 0;
   text-align: right;
 }
 
