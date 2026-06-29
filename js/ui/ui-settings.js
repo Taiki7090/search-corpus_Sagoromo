@@ -1,7 +1,5 @@
 import * as appState from "../store/app-state.js";
 import {
-  updateColumnVisibility,
-  updateStringColumnVisibility,
   displayPage,
   displayStringPage,
 } from "./ui-table.js";
@@ -20,7 +18,7 @@ export function setupDisplayColumnListeners() {
       } else {
         checkbox.addEventListener("change", () => {
           saveCurrentColumnState("unit");
-          updateColumnVisibility();
+          displayPage();
         });
       }
     });
@@ -41,7 +39,7 @@ export function setupDisplayColumnListeners() {
             }
           });
         saveCurrentColumnState("unit");
-        updateColumnVisibility();
+        displayPage();
       });
     } else console.warn("[ui.js] select-all-columns button not found");
 
@@ -66,7 +64,7 @@ export function setupDisplayColumnListeners() {
             }
           });
         saveCurrentColumnState("unit");
-        updateColumnVisibility();
+        displayPage();
       });
     }
 
@@ -79,7 +77,7 @@ export function setupDisplayColumnListeners() {
       } else {
         checkbox.addEventListener("change", () => {
           saveCurrentColumnState("string");
-          updateStringColumnVisibility();
+          displayStringPage();
         });
       }
     });
@@ -102,7 +100,7 @@ export function setupDisplayColumnListeners() {
             }
           });
         saveCurrentColumnState("string");
-        updateStringColumnVisibility();
+        displayStringPage();
       });
     } else console.warn("[ui.js] string-select-all-columns button not found");
 
@@ -129,7 +127,7 @@ export function setupDisplayColumnListeners() {
             }
           });
         saveCurrentColumnState("string");
-        updateStringColumnVisibility();
+        displayStringPage();
       });
     }
   } catch (error) {
