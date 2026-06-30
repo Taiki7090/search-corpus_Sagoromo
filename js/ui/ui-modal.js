@@ -62,7 +62,7 @@ export function showModalMetadataTable(
   const title = document.getElementById("modal-metadata-title");
   if (title) {
     if (contextType === "position") {
-      title.textContent = "前後文脈の情報";
+      title.textContent = "詳細な文脈情報";
     } else if (contextType === "pre") {
       title.textContent = "前文脈の情報";
     } else if (contextType === "post") {

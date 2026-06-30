@@ -935,9 +935,22 @@ label[for="string-results-per-page"] {
 }
 
 #modal-metadata-content {
+  /* 余白(パディング)はこの要素が担当し、スクロールはさせない。
+     スクロールを内側の #modal-metadata-scroll に分離することで、
+     sticky ヘッダーの上にこの余白が常に残り、スクロールしたデータが
+     ヘッダーの上に回り込んで見えることがなくなる。 */
   padding: var(--spacing-lg);
+  overflow: hidden;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+#modal-metadata-scroll {
   overflow: auto;
   flex: 1 1 auto;
+  min-height: 0;
 }
 
 .modal-metadata-close {
