@@ -1,4 +1,3 @@
-import { extractWorkTitleFromFileName } from "../utils/text-utils.js";
 import { fixedWorkMetadata } from "../data/metadata-definition.js";
 import { columnOrderInternalKeys } from "../ui/ui-constants.js";
 import { lookupPageLine } from "../data/sagoromo-line-map.js";
@@ -51,17 +50,6 @@ export function parseOpenCHJLine(
       finalManuscriptName = meta.manuscriptName ?? null;
       finalVolume = meta.volume ?? null;
       metaSourceFound = true;
-    }
-    if (!metaSourceFound) {
-      const baseTitleKey = extractWorkTitleFromFileName(
-        primaryMetaKeyCandidate
-      );
-      if (baseTitleKey && fixedWorkMetadata.hasOwnProperty(baseTitleKey)) {
-        const meta = fixedWorkMetadata[baseTitleKey];
-        finalManuscriptName = meta.manuscriptName ?? null;
-        finalVolume = meta.volume ?? null;
-        metaSourceFound = true;
-      }
     }
   }
 
