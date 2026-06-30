@@ -1,3 +1,28 @@
+import { toFullWidthKatakana } from "../utils/text-utils.js";
+
+// これらの種別が選択されたとき、入力欄を全角カタカナ入力にする
+// （「語彙素」は漢字・ひらがな表記を保持するため対象外）
+const KATAKANA_INPUT_TYPES = ["語彙素読み", "発音形出現形"];
+
+// 入力欄に全角カタカナへの自動変換を適用する
+function applyKatakanaInput(inputField) {
+  inputField.lang = "ja";
+  // 旧来の IME 制御（対応ブラウザのみ。未対応でも下記の変換で全角カタカナ化される）
+  inputField.style.imeMode = "active";
+
+  inputField.addEventListener("input", function () {
+    const before = inputField.value;
+    const after = toFullWidthKatakana(before);
+    if (after === before) return;
+
+    const caret = inputField.selectionStart;
+    inputField.value = after;
+    // 長さが変わらない変換（ひらがな→カタカナ等）はカーソル位置を保持
+    const newPos = after.length === before.length ? caret : after.length;
+    inputField.setSelectionRange(newPos, newPos);
+  });
+}
+
 const orderedCategories = {
   pos: [
     "名詞",
@@ -158,6 +183,9 @@ export function attachChangeEvent(select) {
       inputField.type = "text";
       inputField.className = "condition-value";
       inputField.placeholder = "短単位の文字列を入力";
+      if (KATAKANA_INPUT_TYPES.includes(selectedType)) {
+        applyKatakanaInput(inputField);
+      }
       inputContainer.appendChild(inputField);
     }
   });
